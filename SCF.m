@@ -1,31 +1,22 @@
 close all
 clear all
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %----------------------------- Inputs ------------------------------------%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-M = 16; %------------------------------------------------Number of elements
-theta = [-60, -20, 20, 45, 60, 80]; %------------------------------------Directions
-freq = 1*10^9; %---------------------------------------Operating frequency
-lambda = (3*10^8)/freq; %--------------------------------------------Lambda
+M = 16; %Number of elements
+theta = [-60, -20, 20, 45, 60, 80]; %Directions
+freq = 1*10^9; %Operating frequency
+lambda = (3*10^8)/freq; %Lambda
 d=lambda/2;
-WF = sqrt(diag([1 1 1 1 1])); %---------------------------Weighting factors
-beamDirac = -90:90; %------------------------------------------Beam range
+WF = sqrt(diag([1 1 1 1 1])); %Weighting factors
+beamDirac = -90:90; %Beam range
 threshold = 5*10^-16;
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %------------------------ Steering vectors -------------------------------%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 steering = 2*pi*d/lambda; %------------------------------------Phase Factor
 for L = 1 : length(theta)
-
     for k = 1 : M
         %V(L,k)= (sind(theta(L)))^2 * exp((-1)*steering*sind(theta(L))*(k-1)*i); %---------Transmitting steering vector: tan square * delay
         V(L,k)= exp((-1)*steering*sind(theta(L))*(k-1)*1i); %---------Transmitting steering vector: tan square * delay
@@ -41,7 +32,6 @@ S = (V)*(ctranspose(V));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------- EC -------------------------------------%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 tic
 [eigVector,eigValue] = eig(S);
 eigValue = diag(eigValue);
@@ -55,23 +45,15 @@ wheighted_Nulls_EC = diag(wheighted_Nulls_EC);
 
 elapsedTime_EC = toc
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %------------------------------- CMC -------------------------------------%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %In CMC the signals x_4, x_8 and x_16 are fixed for testing purpose 
 %Each M should have identical threshold for different # of directions
-
-
-
-R = [real(S) -imag(S); imag(S) real(S)]; %----------Step 1 of the algorithm
+R = [real(S) -imag(S); imag(S) real(S)]; %Step 1 of the algorithm
 lambda_fac = 0.5;
 R_dash = 2*(R + lambda_fac*eye(length(R)));
-
-
-x=randn(M,1)+1i*randn(M,1); %---------------------------Initialization of x
+x=randn(M,1)+1i*randn(M,1); %Initialization of x
 
 % %%%%% fixed x %%%%%
 % x_16 = transpose([0.1732 + 0.4980i -0.5055 + 2.7891i -1.1933 + 0.7276i 0.6470 - 0.7731i -0.3536 + 0.8366i 0.0464 - 1.1283i -0.7929 - 1.4245i -1.5505 + 0.7174i 0.1716 - 0.7779i -0.0621 + 0.3160i 1.1990 + 1.4065i 0.8017 + 0.4011i 1.0533 + 0.9297i -0.7489 - 1.6058i -0.9363 + 0.6615i -1.2691 + 2.1385i]);
